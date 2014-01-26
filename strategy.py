@@ -1,11 +1,25 @@
 
 import random
 
+MIDDLE = 4
 WINNING_MASKS = [
     73, 146, 292,  # Vertical wins
     7, 56, 448,    # Horizontal wins
     273, 84        # Diagonal wins
 ]
+CORNERS = [0, 2, 6, 8]
+OPPOSITE_CORNER = {
+    0: 8,
+    2: 6,
+    6: 2,
+    8: 0
+}
+CORNER_PLAYS = {
+    (5, 7): 8,
+    (1, 3): 0,
+    (1, 5): 2,
+    (3, 7): 6
+}
 
 
 def is_win_state(board_state):
@@ -56,19 +70,125 @@ def is_win_state(board_state):
             masks[cell] |= 1 << i
 
     for mask in WINNING_MASKS:
-        for cell in ['X', 'O']:
-            if masks[cell] & mask == mask:
-                return (True, cell, mask)
+        for player in ['X', 'O']:
+            if masks[player] & mask == mask:
+                return (player, mask)
 
     # If all squares are filled yet there is no
     # winner, it is a tie.
     if all(board_state):
-        return (False, 'TIE', None)
+        return ('TIE', None)
 
-    return (False, None, None)
+    return (None, None)
+
+
+def _look_for(board_state, needle='X'):
+    """Accepts a board_state and a square value that it is
+    looking for. It attempts to find columns, rows, and
+    diagonals where the needle occurs twice accompanied
+    by an empty square. If so, returns that empty square's
+    number. If not, returns False.
+
+    >>> _look_for(string_state_to_list('XX-------'), 'X')
+    2
+    >>> _look_for(string_state_to_list('---X-X---'), 'X')
+    4
+    >>> _look_for(string_state_to_list('X--X-----'), 'X')
+    6
+    >>> _look_for(string_state_to_list('-X--X----'), 'X')
+    7
+    >>> _look_for(string_state_to_list('--X--X---'), 'X')
+    8
+    >>> _look_for(string_state_to_list('--X-----X'), 'X')
+    5
+    >>> _look_for(string_state_to_list('-X-------'), 'X')
+    False
+    """
+
+    # Horizontals
+    for i in range(3):
+        row_start = 3 * i
+        row = board_state[row_start:row_start + 3]
+        if row.count(None) and row.count(needle) == 2:
+            return row_start + row.index(None)
+
+    # Verticals
+    for i in range(3):
+        col = board_state[i:9:3]
+        if col.count(None) and col.count(needle) == 2:
+            return col.index(None) * 3 + i
+
+    # Diagonals
+    if board_state[MIDDLE] == needle:
+        for i in CORNERS:
+            if board_state[i] is None and board_state[OPPOSITE_CORNER[i]] == needle:
+                return i
+
+    return False
+
+
+def can_win(board_state):
+    """Accepts a board state and inspects it for winning
+    opportunities. Returns the square number where the
+    win can occur, or False if no win can happen."""
+    return _look_for(board_state, 'O')
+
+
+def should_block(board_state):
+    """Accepts a board state, inspects it for the need
+    to block the human player. If a block is needed,
+    returns number of square needing block, otherwise
+    return False."""
+    return _look_for(board_state, 'X')
 
 
 def computer_play(board_state):
+
+    highest = -2
+    possibilities = []
+
+    # If none of the squares are occupied, select
+    # the middle square.
+    if not any(board_state) or board_state[MIDDLE] is None:
+        return MIDDLE
+
+    win = can_win(board_state)
+    if win is not False: return win
+
+    block = should_block(board_state)
+    if block is not False: return block
+
+    for a, b in CORNER_PLAYS.keys():
+        if [board_state[a], board_state[b]] == ['X', 'X']:
+            square_to_mark = CORNER_PLAYS[(a, b)]
+            if board_state[square_to_mark] is None:
+                return square_to_mark
+
+    for possibility in visitable_states(board_state):
+
+        score = state_score(possibility, player='O')
+
+        print possibility, score
+
+        # If this possibility's score is higher than we've
+        # found before, reset the possibilities list with this one.
+        if score > highest:
+            highest = score
+            possibilities = [possibility]
+
+        # If this possibility's score is the same as the
+        # current highest, it is equally likely to lead to
+        # a win for us. Add it to the list of possibilities.
+        elif score == highest:
+            possibilities.append(possibility)
+
+    state = random.choice(possibilities)
+
+    for i in range(len(board_state)):
+        if board_state[i] != state[i]:
+            print i
+            return i
+
     available = []
     for i in range(len(board_state)):
         if board_state[i] is None:
@@ -76,9 +196,65 @@ def computer_play(board_state):
     return random.choice(available)
 
 
+def state_score(board_state, player='O', depth=0):
+    winner, win_state = is_win_state(board_state)
+
+    # Recursion base-cases: return score of favorability
+    if winner == 'X':
+        return -1
+    elif winner == 'TIE':
+        return 0
+    elif winner == 'O':
+        return 1
+
+    if player == 'O':
+        best_bet = float('-inf')
+    else:
+        best_bet = float('inf')
+
+    remaining = []
+    for i, square in enumerate(board_state):
+        if square is None:
+            remaining.append(i)
+
+    for square in remaining:
+        state = board_state[:]
+        state[square] = player
+
+        score = state_score(state, opponent(player), depth + 1)
+        if player == 'O':
+            best_bet = max([score, best_bet])
+        elif player == 'X':
+            best_bet = min([score, best_bet])
+
+    return best_bet
+
+
+
+def opponent(who):
+    """
+    >>> opponent('X')
+    'O'
+    >>> opponent('O')
+    'X'
+    """
+    players = list('OX')
+    return players[(players.index(who) + 1) % 2]
+
 #
 # Testing utilities
 #
+
+def string_state_to_list(board_state_string):
+    """
+    >>> string_state_to_list('XOOOXXOXO')
+    ['X', 'O', 'O', 'O', 'X', 'X', 'O', 'X', 'O']
+    >>> string_state_to_list('X--------')
+    ['X', None, None, None, None, None, None, None, None]
+    >>> string_state_to_list('X-O-XXXXX')
+    ['X', None, 'O', None, 'X', 'X', 'X', 'X', 'X']
+    """
+    return map(lambda c: c if c != '-' else None, list(board_state_string))
 
 def create_board():
     """
@@ -87,13 +263,13 @@ def create_board():
     """
     return [None] * 9
 
-def possible_states_after_human(board_state):
+def visitable_states(board_state, player='X'):
     """
-    >>> possible_states_after_human([None])
+    >>> visitable_states([None])
     [['X']]
-    >>> possible_states_after_human([None, None])
+    >>> visitable_states([None, None])
     [['X', None], [None, 'X']]
-    >>> possible_states_after_human([None, None, 'O'])
+    >>> visitable_states([None, None, 'O'])
     [['X', None, 'O'], [None, 'X', 'O']]
     """
     possibilities = []
@@ -101,7 +277,7 @@ def possible_states_after_human(board_state):
     for i, square in enumerate(board_state):
         if square is None:
             temp = board_state[:]
-            temp[i] = 'X'
+            temp[i] = player
             possibilities.append(temp)
 
     return possibilities
@@ -113,7 +289,7 @@ def exhaustive_search():
     this algorithm. Will stop immediately when it loses
     a game, which it should never."""
 
-    frontier = [[i] for i in possible_states_after_human(create_board())]
+    frontier = [[i] for i in visitable_states(create_board())]
     wins = 0
 
     while len(frontier):
@@ -121,31 +297,25 @@ def exhaustive_search():
         board_state = state_chain[-1]
 
         winning = is_win_state(board_state)
-        if winning[0] or winning[1] == 'TIE':
-            if winning[1] in ['O', 'TIE']:
-                wins += 1
-                print "WON!", wins
-                continue
-            else:
-                print "Test failed. Computer lost."
-                print state_chain
-                break
+        if winning[0] in ['TIE', 'O']:
+            wins += 1
+            print "WON!", wins
+            continue
+        elif winning[0] == 'X':
+            print "Test failed. Human won."
+            print state_chain
+            break
 
         computer_response = computer_play(board_state)
         board_state[computer_response] = 'O'
 
         winning = is_win_state(board_state)
-        if winning[0] or winning[1] == 'TIE':
-            if winning[1] in ['O', 'TIE']:
-                wins += 1
-                print "WON!", wins
-                continue
-            else:
-                print "Test failed. Computer lost."
-                print state_chain
-                break
+        if winning[0] in ['TIE', 'O']:
+            wins += 1
+            print "WON!", wins
+            continue
 
-        for p_state in possible_states_after_human(board_state):
+        for p_state in visitable_states(board_state):
             p_state_chain = state_chain[:]
             p_state_chain.append(p_state)
             frontier.append(p_state_chain)
