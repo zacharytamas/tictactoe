@@ -1,4 +1,6 @@
 
+import random
+
 WINNING_MASKS = [
     73, 146, 292,  # Vertical wins
     7, 56, 448,    # Horizontal wins
@@ -64,6 +66,92 @@ def is_win_state(board_state):
 
     return (False, None, None)
 
+
+def computer_play(board_state):
+    available = []
+    for i in range(len(board_state)):
+        if board_state[i] is None:
+            available.append(i)
+    return random.choice(available)
+
+
+#
+# Testing utilities
+#
+
+def create_board():
+    """
+    >>> create_board()
+    [None, None, None, None, None, None, None, None, None]
+    """
+    return [None] * 9
+
+def possible_states_after_human(board_state):
+    """
+    >>> possible_states_after_human([None])
+    [['X']]
+    >>> possible_states_after_human([None, None])
+    [['X', None], [None, 'X']]
+    >>> possible_states_after_human([None, None, 'O'])
+    [['X', None, 'O'], [None, 'X', 'O']]
+    """
+    possibilities = []
+
+    for i, square in enumerate(board_state):
+        if square is None:
+            temp = board_state[:]
+            temp[i] = 'X'
+            possibilities.append(temp)
+
+    return possibilities
+
+
+def exhaustive_search():
+    """Performs a breadth-first, exhaustive search of
+    the whole problem space to prove the correctness of
+    this algorithm. Will stop immediately when it loses
+    a game, which it should never."""
+
+    frontier = [[i] for i in possible_states_after_human(create_board())]
+    wins = 0
+
+    while len(frontier):
+        state_chain = frontier.pop()
+        board_state = state_chain[-1]
+
+        winning = is_win_state(board_state)
+        if winning[0] or winning[1] == 'TIE':
+            if winning[1] in ['O', 'TIE']:
+                wins += 1
+                print "WON!", wins
+                continue
+            else:
+                print "Test failed. Computer lost."
+                print state_chain
+                break
+
+        computer_response = computer_play(board_state)
+        board_state[computer_response] = 'O'
+
+        winning = is_win_state(board_state)
+        if winning[0] or winning[1] == 'TIE':
+            if winning[1] in ['O', 'TIE']:
+                wins += 1
+                print "WON!", wins
+                continue
+            else:
+                print "Test failed. Computer lost."
+                print state_chain
+                break
+
+        for p_state in possible_states_after_human(board_state):
+            p_state_chain = state_chain[:]
+            p_state_chain.append(p_state)
+            frontier.append(p_state_chain)
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+
+    exhaustive_search()
