@@ -20,6 +20,12 @@ CORNER_PLAYS = {
     (1, 5): 2,
     (3, 7): 6
 }
+LATERAL_CORNERS = {
+    0: [2, 6],
+    2: [0, 8],
+    6: [0, 8],
+    8: [2, 6]
+}
 
 
 def is_win_state(board_state):
@@ -146,11 +152,14 @@ def computer_play(board_state):
 
     highest = -2
     possibilities = []
+    plays = len(filter(None, board_state))
 
     # If none of the squares are occupied, select
     # the middle square.
     if not any(board_state) or board_state[MIDDLE] is None:
         return MIDDLE
+
+    if plays == 1: return 0
 
     win = can_win(board_state)
     if win is not False: return win
@@ -164,11 +173,24 @@ def computer_play(board_state):
             if board_state[square_to_mark] is None:
                 return square_to_mark
 
+    if plays == 3:
+        if board_state[MIDDLE] == 'O':
+            for corner in CORNERS:
+                if [board_state[corner], board_state[OPPOSITE_CORNER[corner]]] == ['X', 'X']:
+                    return 1
+        elif board_state[MIDDLE] == 'X':
+            for corner in CORNERS:
+                if board_state[corner] == 'X':
+                    for c in LATERAL_CORNERS[corner]:
+                        if board_state[c] is None:
+                            return c
+
+    # If we haven't identified a situation, use minimax to
+    # find possible routes.
+
     for possibility in visitable_states(board_state):
 
         score = state_score(possibility, player='O')
-
-        print possibility, score
 
         # If this possibility's score is higher than we've
         # found before, reset the possibilities list with this one.
@@ -184,16 +206,10 @@ def computer_play(board_state):
 
     state = random.choice(possibilities)
 
+    # @TODO This is kind of a hack to figure out which square was actually marked.
     for i in range(len(board_state)):
         if board_state[i] != state[i]:
-            print i
             return i
-
-    available = []
-    for i in range(len(board_state)):
-        if board_state[i] is None:
-            available.append(i)
-    return random.choice(available)
 
 
 def state_score(board_state, player='O', depth=0):
@@ -289,37 +305,41 @@ def exhaustive_search():
     this algorithm. Will stop immediately when it loses
     a game, which it should never."""
 
+    # Seed the search frontier with all the visitable
+    # states at the start: that is, one where one X is
+    # placed in every available square.
     frontier = [[i] for i in visitable_states(create_board())]
-    wins = 0
+    winning = True
 
-    while len(frontier):
+    while len(frontier) and winning:
         state_chain = frontier.pop()
         board_state = state_chain[-1]
 
         winning = is_win_state(board_state)
         if winning[0] in ['TIE', 'O']:
-            wins += 1
-            print "WON!", wins
             continue
         elif winning[0] == 'X':
             print "Test failed. Human won."
             print state_chain
-            break
+            winning = False
+            continue
 
+        # Get the computer's counter play to this
+        # state and play it.
         computer_response = computer_play(board_state)
         board_state[computer_response] = 'O'
 
         winning = is_win_state(board_state)
         if winning[0] in ['TIE', 'O']:
-            wins += 1
-            print "WON!", wins
             continue
 
+        # Add to the search frontier all the states that
+        # are visitable from this one. We'll search those
+        # states later.
         for p_state in visitable_states(board_state):
             p_state_chain = state_chain[:]
             p_state_chain.append(p_state)
             frontier.append(p_state_chain)
-
 
 if __name__ == "__main__":
     import doctest
