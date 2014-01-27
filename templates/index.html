@@ -6,12 +6,33 @@
     <title>Tic-Tac-Toe</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet/less" href="static/less/tic-tac.less">
   </head>
   <body>
 
 
+    <table id="game-board">
+      <tr>
+        <td id="square-0"></td>
+        <td id="square-1"></td>
+        <td id="square-2"></td>
+      </tr>
+      <tr>
+        <td id="square-3"></td>
+        <td id="square-4"></td>
+        <td id="square-5"></td>
+      </tr>
+      <tr>
+        <td id="square-6"></td>
+        <td id="square-7"></td>
+        <td id="square-8"></td>
+      </tr>
+    </table>
+
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+    <script src="static/vendor/less-1.6.1.min.js"></script>
     <script src="static/vendor/underscore-min.js"></script>
     <script src="static/vendor/backbone-min.js"></script>
 

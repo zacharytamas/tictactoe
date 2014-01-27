@@ -1,0 +1,35 @@
+
+body {
+
+}
+
+#game-board {
+  border: 5px #000 solid;
+  font-size: 3vw;
+  // width: 100%;
+
+  tr {
+    height: 3em;
+
+    & + tr {
+      td {
+        border-top: 1px #000 solid;
+      }
+    }
+  }
+
+  td {
+
+    width: 3em;
+    text-align: center;
+
+    &:hover, &:active {
+      background: #eee;
+      cursor: pointer;
+    }
+
+    &.winning {
+      background: blue;
+    }
+  }
+}
