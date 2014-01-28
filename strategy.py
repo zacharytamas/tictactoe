@@ -8,6 +8,7 @@ WINNING_MASKS = [
     273, 84        # Diagonal wins
 ]
 CORNERS = [0, 2, 6, 8]
+EDGES = [1, 3, 5, 7]
 OPPOSITE_CORNER = {
     0: 8,
     2: 6,
@@ -159,7 +160,7 @@ def computer_play(board_state):
     if not any(board_state) or board_state[MIDDLE] is None:
         return MIDDLE
 
-    if plays == 1: return 0
+    if plays == 1: return random.choice(CORNERS)
 
     win = can_win(board_state)
     if win is not False: return win
@@ -177,7 +178,7 @@ def computer_play(board_state):
         if board_state[MIDDLE] == 'O':
             for corner in CORNERS:
                 if [board_state[corner], board_state[OPPOSITE_CORNER[corner]]] == ['X', 'X']:
-                    return 1
+                    return random.choice(EDGES)
         elif board_state[MIDDLE] == 'X':
             for corner in CORNERS:
                 if board_state[corner] == 'X':
