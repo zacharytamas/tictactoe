@@ -1,6 +1,172 @@
+@green: rgb(15, 173, 48);
 
 body {
+  font-family: Arial;
+  margin: 0;
 
+  font-size: 15pt;
+  text-align: center;
+}
+
+.container {
+  max-width: 320px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+a {
+  color: @green;
+  text-decoration: none;
+}
+
+header {
+  border-bottom: 1px rgb(171, 166, 159) solid;
+  height: 3rem;
+  line-height: 44px;
+  padding: 0 0.5rem;
+  text-align: center;
+  position: relative;
+
+  .pull-right {
+    float: right;
+  }
+
+  #winMask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+    display: none;
+    background: @green;
+    line-height: 3rem;
+
+    color: #fff;
+    text-align: center;
+  }
+}
+
+.game-board {
+
+  .board {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    #square-0,
+    #square-1,
+    #square-3,
+    #square-4,
+    #square-6,
+    #square-7 {
+      border-right: 2px #aaa solid;
+    }
+
+    #square-0,
+    #square-1,
+    #square-2,
+    #square-3,
+    #square-4,
+    #square-5 {
+      border-bottom: 2px #aaa solid;
+    }
+
+    li {
+      width: 105px;
+      height: 100px;
+      float: left;
+
+      a {
+        width: 100%;
+        height: 100px;
+        float: left;
+        font-weight: 100;
+
+        -webkit-perspective: 600px;
+           -moz-perspective: 600px;
+            -ms-perspective: 600px;
+                perspective: 600px;
+      }
+
+      &.marked {
+        .front {
+          -webkit-transform: rotateX(0deg) rotateY(180deg);
+             -moz-transform: rotateX(0deg) rotateY(180deg);
+              -ms-transform: rotateX(0deg) rotateY(180deg);
+               -o-transform: rotateX(0deg) rotateY(180deg);
+        }
+
+        .back {
+          z-index: 1;
+          -webkit-transform: rotateX(0deg) rotateY(0deg);
+             -moz-transform: rotateX(0deg) rotateY(0deg);
+              -ms-transform: rotateX(0deg) rotateY(0deg);
+               -o-transform: rotateX(0deg) rotateY(0deg);
+        }
+      }
+
+      &.winning {
+        a { color: #fff; }
+        .back { background: @green; }
+      }
+
+      .back {
+        position: absolute;
+        top: 0;
+        width: inherit;
+        height: inherit;
+        text-align: center;
+        z-index: -1;
+        font-size: 4em;
+        line-height: 100px;
+
+        -webkit-transform: rotateX(0deg) rotateY(-180deg);
+           -moz-transform: rotateX(0deg) rotateY(-180deg);
+            -ms-transform: rotateX(0deg) rotateY(-180deg);
+             -o-transform: rotateX(0deg) rotateY(-180deg);
+        -webkit-transition: all 0.5s ease-in-out;
+           -moz-transition: all 0.5s ease-in-out;
+            -ms-transition: all 0.5s ease-in-out;
+             -o-transition: all 0.5s ease-in-out;
+                transition: all 0.5s ease-in-out;
+        -webkit-backface-visibility: hidden;
+           -moz-backface-visibility: hidden;
+            -ms-backface-visibility: hidden;
+             -o-backface-visibility: hidden;
+                backface-visibility: hidden;
+        -webkit-transform-style: preserve-3d;
+           -moz-transform-style: preserve-3d;
+             -o-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+      }
+
+      .front {
+        text-align: center;
+        -webkit-transform: rotateX(0deg) rotateY(0deg);
+           -moz-transform: rotateX(0deg) rotateY(0deg);
+            -ms-transform: rotateX(0deg) rotateY(0deg);
+             -o-transform: rotateX(0deg) rotateY(0deg);
+        -webkit-transition: all 0.5s ease-in-out;
+           -moz-transition: all 0.5s ease-in-out;
+            -ms-transition: all 0.5s ease-in-out;
+             -o-transition: all 0.5s ease-in-out;
+                transition: all 0.5s ease-in-out;
+        -webkit-backface-visibility: hidden;
+           -moz-backface-visibility: hidden;
+            -ms-backface-visibility: hidden;
+             -o-backface-visibility: hidden;
+                backface-visibility: hidden;
+        -webkit-transform-style: preserve-3d;
+           -moz-transform-style: preserve-3d;
+             -o-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+      }
+    }
+
+
+  }
 }
 
 #game-board {

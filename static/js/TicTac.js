@@ -10,6 +10,13 @@
   TT.BoardModel = Backbone.Model.extend({
     url: '/game',
 
+    resetGame: function () {
+      this.set({
+        board_state: [null, null, null, null, null, null, null, null, null],
+        win: [null, null]
+      });
+    },
+
     markSquare: function (square) {
       var state = this.toJSON().board_state;
 
@@ -47,16 +54,20 @@
     },
 
     squareWasClicked: function (event) {
-      var $square = $(event.currentTarget);
-      var squareSelected = parseInt($square.attr('id').split('-')[1], 10);
-      var marked = TT.boardModel.markSquare(squareSelected);
+      var $square = $(event.currentTarget),
+        squareSelected = parseInt($square.attr('id').split('-')[1], 10),
+        marked;
+
+      if (TT.boardModel.get('win')[0]) {
+        TT.boardModel.resetGame();
+      }
+
+      marked = TT.boardModel.markSquare(squareSelected);
 
       event.preventDefault();
 
       if (marked) {
         TT.boardModel.save();
-      } else {
-        alert('invalid choice');
       }
     },
 
@@ -66,21 +77,25 @@
 
     renderUpdates: function () {
 
-      var win = TT.boardModel.get('win');
+      var win = TT.boardModel.get('win'),
+        winMask = $('#winMask').slideUp();
 
       if (win && win[0]) {
 
+        if (win[0] === 'TIE') {
+          winMask.text('The game is tied.');
+        } else {
+          winMask.text(win[0] + ' wins!');
+        }
+
+        winMask.slideDown();
+
         // Highlight the squares responsible for the win.
         for (var i = 0; i < 9; i++) {
-          if (win[0] === 'TIE') {
-            break;
-          }
-
           if ((1 << i) & win[1]) {
             $('#square-' + i).addClass('winning');
           }
         }
-
       } else {
         this.$('li').removeClass('winning');
       }
