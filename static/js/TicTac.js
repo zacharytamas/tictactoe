@@ -30,19 +30,28 @@
   ////////////////////////////////////////////////
 
   TT.BoardView = Backbone.View.extend({
-    el: '#game-board',  // This already exists on the page.
+    el: 'body',
 
     events: {
-      'click td': 'squareWasClicked'
+      'click li': 'squareWasClicked',
+      'click .replay-button': 'replay'
     },
 
     initialize: function () {
       this.listenTo(TT.boardModel, 'change', this.renderUpdates);
     },
 
+    replay: function (event) {
+      event.preventDefault();
+      TT.boardModel.fetch();
+    },
+
     squareWasClicked: function (event) {
-      var square = parseInt($(event.target).attr('id').split('-')[1], 10);
-      var marked = TT.boardModel.markSquare(square);
+      var $square = $(event.currentTarget);
+      var squareSelected = parseInt($square.attr('id').split('-')[1], 10);
+      var marked = TT.boardModel.markSquare(squareSelected);
+
+      event.preventDefault();
 
       if (marked) {
         TT.boardModel.save();
@@ -62,7 +71,6 @@
       if (win && win[0]) {
 
         // Highlight the squares responsible for the win.
-
         for (var i = 0; i < 9; i++) {
           if (win[0] === 'TIE') {
             break;
@@ -73,19 +81,22 @@
           }
         }
 
-
       } else {
-        this.$('td').removeClass('winning');
+        this.$('li').removeClass('winning');
       }
 
       return this.renderSquares();
     },
 
     renderSquares: function () {
-      this.$('td').empty();
-
       _.each(TT.boardModel.get('board_state'), function (value, i) {
-        $('#square-' + i).text(value || '');
+        var square = $('#square-' + i);
+        if (value !== null) {
+          square.find('.back').text(value);
+          square.addClass('marked');
+        } else {
+          square.removeClass('marked');
+        }
       });
 
       return this;
