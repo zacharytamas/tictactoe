@@ -1,4 +1,5 @@
 @green: rgb(15, 173, 48);
+@grey: rgb(223, 223, 221);
 
 body {
   font-family: Arial;
@@ -19,7 +20,7 @@ a {
 }
 
 header {
-  border-bottom: 1px rgb(171, 166, 159) solid;
+  border-bottom: 1px @grey solid;
   height: 3rem;
   line-height: 3rem;
   padding: 0 0.5rem;
@@ -40,7 +41,6 @@ header {
     display: none;
     background: @green;
     line-height: 3rem;
-
     color: #fff;
     text-align: center;
   }
@@ -61,7 +61,7 @@ header {
     #square-4,
     #square-6,
     #square-7 {
-      border-right: 2px #aaa solid;
+      border-right: 2px @grey solid;
     }
 
     #square-0,
@@ -70,7 +70,7 @@ header {
     #square-3,
     #square-4,
     #square-5 {
-      border-bottom: 2px #aaa solid;
+      border-bottom: 2px @grey solid;
     }
 
     li {
@@ -91,13 +91,6 @@ header {
       }
 
       &.marked {
-        .front {
-          -webkit-transform: rotateX(0deg) rotateY(180deg);
-             -moz-transform: rotateX(0deg) rotateY(180deg);
-              -ms-transform: rotateX(0deg) rotateY(180deg);
-               -o-transform: rotateX(0deg) rotateY(180deg);
-        }
-
         .back {
           z-index: 1;
           -webkit-transform: rotateX(0deg) rotateY(0deg);
@@ -141,61 +134,8 @@ header {
              -o-transform-style: preserve-3d;
                 transform-style: preserve-3d;
       }
-
-      .front {
-        text-align: center;
-        -webkit-transform: rotateX(0deg) rotateY(0deg);
-           -moz-transform: rotateX(0deg) rotateY(0deg);
-            -ms-transform: rotateX(0deg) rotateY(0deg);
-             -o-transform: rotateX(0deg) rotateY(0deg);
-        -webkit-transition: all 0.5s ease-in-out;
-           -moz-transition: all 0.5s ease-in-out;
-            -ms-transition: all 0.5s ease-in-out;
-             -o-transition: all 0.5s ease-in-out;
-                transition: all 0.5s ease-in-out;
-        -webkit-backface-visibility: hidden;
-           -moz-backface-visibility: hidden;
-            -ms-backface-visibility: hidden;
-             -o-backface-visibility: hidden;
-                backface-visibility: hidden;
-        -webkit-transform-style: preserve-3d;
-           -moz-transform-style: preserve-3d;
-             -o-transform-style: preserve-3d;
-                transform-style: preserve-3d;
-      }
     }
 
 
-  }
-}
-
-#game-board {
-  border: 5px #000 solid;
-  font-size: 3vw;
-  // width: 100%;
-
-  tr {
-    height: 3em;
-
-    & + tr {
-      td {
-        border-top: 1px #000 solid;
-      }
-    }
-  }
-
-  td {
-
-    width: 3em;
-    text-align: center;
-
-    &:hover, &:active {
-      background: #eee;
-      cursor: pointer;
-    }
-
-    &.winning {
-      background: blue;
-    }
   }
 }
