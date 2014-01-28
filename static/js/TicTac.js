@@ -57,8 +57,8 @@
       var optimizingDimension = Math.min($(window).width(), $(window).height()),
         boardSize = optimizingDimension - $('header').height();
 
-      this.$('.container').width(optimizingDimension);
-      this.$('.game-board').height(boardSize);
+      this.$('.container').width(boardSize);
+      this.$('.board').css('font-size', (boardSize - 4) / 3);  // 4 is the width of borders
 
     },
 
