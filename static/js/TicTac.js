@@ -53,14 +53,15 @@
       TT.boardModel.resetGame();
     },
 
-    handleResize: function () {
+    handleResize: _.throttle(function () {
       var optimizingDimension = Math.min($(window).width(), $(window).height()),
         boardSize = optimizingDimension - $('header').height();
 
       this.$('.container').width(boardSize);
       this.$('.board').css('font-size', (boardSize - 4) / 3);  // 4 is the width of borders
 
-    },
+      return this;
+    }, 300),
 
     squareWasClicked: function (event) {
       var $square = $(event.currentTarget),
@@ -131,7 +132,8 @@
   TT.boardModel = new TT.BoardModel();
 
   // Setup the interface
-  TT.boardView = new TT.BoardView().render();
+  TT.boardView = new TT.BoardView().render().handleResize();
+  $(window).resize(TT.boardView.handleResize);
 
   // Fetch initial game state.
   TT.boardModel.fetch();
