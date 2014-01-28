@@ -50,7 +50,16 @@
 
     replay: function (event) {
       event.preventDefault();
-      TT.boardModel.fetch();
+      TT.boardModel.resetGame();
+    },
+
+    handleResize: function () {
+      var optimizingDimension = Math.min($(window).width(), $(window).height()),
+        boardSize = optimizingDimension - $('header').height();
+
+      this.$('.container').width(optimizingDimension);
+      this.$('.game-board').height(boardSize);
+
     },
 
     squareWasClicked: function (event) {
