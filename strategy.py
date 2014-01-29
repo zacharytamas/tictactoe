@@ -260,8 +260,8 @@ def opponent(who):
     >>> opponent('O')
     'X'
     """
-    players = list('OX')
-    return players[(players.index(who) + 1) % 2]
+    if who == 'X': return 'O'
+    return 'X'
 
 #
 # Testing utilities
