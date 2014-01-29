@@ -1,4 +1,4 @@
-Intructions:
+Instructions:
 1. Fork this repo on GitHub
 2. Create a program that can interactively play the game of Tic-Tac-Toe against a human player and never lose.
 3. Commit early and often, with good messages.
@@ -7,3 +7,25 @@ Intructions:
 If you don't want to broadcast your intentions by forking this, feel free to clone it and work locally. Then, send us a tar.gz of your solution, including your .git folder so we can see your commit history.
 
 We are a Django shop, but it is not a requirement that you implement your program as a Django app.
+
+---
+
+To run the tests:
+
+    python strategy.py
+
+This will automatically run all the tests for the Python implementation. If you get no result, that means everything's okay.
+
+To play the game, you'll first need to install the requirements:
+
+    pip install -r requirements.txt
+
+You may wish to do this inside of a `virtualenv` if that's your thing. When you have the dependencies you can start the server this way:
+
+    python serve.py
+
+This will automatically bind to 0.0.0.0 on port 5000. It binds this way instead of 127.0.0.1 so that you can access the game across the network, say on your mobile device. I wrote the UI to adapt to basically any common screen size, and you should be able to play it on any device with a reasonable WebKit-based browser. You can of course access it on the local computer as well:
+
+    http://localhost:5000/
+
+To access over the network on your phone/tablet, you'll of course need your computer's IP. Finding that is an exercise I will leave to the reader. :)
