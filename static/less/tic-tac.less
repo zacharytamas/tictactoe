@@ -2,11 +2,11 @@
 @grey: rgb(223, 223, 221);
 
 body {
-  font-family: Arial;
   margin: 0;
+  text-align: center;
 
   font-size: 15pt;
-  text-align: center;
+  font-family: Arial;
 }
 
 .container {
@@ -20,12 +20,12 @@ a {
 }
 
 header {
-  border-bottom: 1px @grey solid;
-  height: 3rem;
-  line-height: 3rem;
-  padding: 0 0.5rem;
-  text-align: center;
   position: relative;
+  padding: 0 0.5rem;
+  height: 3rem;
+  border-bottom: 1px @grey solid;
+  text-align: center;
+  line-height: 3rem;
 
   .pull-right {
     float: right;
@@ -35,25 +35,25 @@ header {
     position: absolute;
     top: 0;
     right: 0;
-    left: 0;
     bottom: 0;
+    left: 0;
     z-index: 50;
     display: none;
     background: @green;
-    line-height: 3rem;
     color: #fff;
     text-align: center;
+    line-height: 3rem;
   }
 }
 
 .game-board {
 
   .board {
-    list-style-type: none;
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
+    list-style-type: none;
 
     #square-0,
     #square-1,
@@ -74,14 +74,14 @@ header {
     }
 
     li {
+      float: left;
       width: 1em;
       height: 1em;
-      float: left;
 
       a {
+        float: left;
         width: 100%;
         height: 100%;
-        float: left;
         font-weight: 100;
 
         -webkit-perspective: 600px;
@@ -108,22 +108,22 @@ header {
       .back {
         position: absolute;
         top: 0;
+        z-index: -1;
         width: inherit;
         height: inherit;
         text-align: center;
-        z-index: -1;
         font-size: 1em;
         line-height: 1em;
-
-        -webkit-transform: rotateX(0deg) rotateY(-180deg);
-           -moz-transform: rotateX(0deg) rotateY(-180deg);
-            -ms-transform: rotateX(0deg) rotateY(-180deg);
-             -o-transform: rotateX(0deg) rotateY(-180deg);
         -webkit-transition: all 0.5s ease-in-out;
            -moz-transition: all 0.5s ease-in-out;
             -ms-transition: all 0.5s ease-in-out;
              -o-transition: all 0.5s ease-in-out;
                 transition: all 0.5s ease-in-out;
+
+        -webkit-transform: rotateX(0deg) rotateY(-180deg);
+           -moz-transform: rotateX(0deg) rotateY(-180deg);
+            -ms-transform: rotateX(0deg) rotateY(-180deg);
+             -o-transform: rotateX(0deg) rotateY(-180deg);
         -webkit-backface-visibility: hidden;
            -moz-backface-visibility: hidden;
             -ms-backface-visibility: hidden;
