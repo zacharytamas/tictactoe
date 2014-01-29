@@ -128,7 +128,8 @@ def _look_for(board_state, needle='X'):
     # Diagonals
     if board_state[MIDDLE] == needle:
         for i in CORNERS:
-            if board_state[i] is None and board_state[OPPOSITE_CORNER[i]] == needle:
+            if all([board_state[i] is None,
+                   board_state[OPPOSITE_CORNER[i]] == needle]):
                 return i
 
     return False
@@ -184,7 +185,8 @@ def computer_play(board_state):
         # to ensure a tie.
         if board_state[MIDDLE] == 'O':
             for corner in CORNERS:
-                if [board_state[corner], board_state[OPPOSITE_CORNER[corner]]] == ['X', 'X']:
+                opposite = OPPOSITE_CORNER[corner]
+                if board_state[corner] == 'X' and board_state[opposite] == 'X':
                     return random.choice(EDGES)
 
         # If the human owns the middle and a corner, we need
