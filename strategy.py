@@ -160,14 +160,18 @@ def computer_play(board_state):
     if not any(board_state) or board_state[MIDDLE] is None:
         return MIDDLE
 
+    # If the human has played the center, choose a random corner.
     if plays == 1: return random.choice(CORNERS)
 
+    # If we can win, do so.
     win = can_win(board_state)
     if win is not False: return win
 
+    # If we can block, do so.
     block = should_block(board_state)
     if block is not False: return block
 
+    # Check for corner plays and play them if they're available.
     for a, b in CORNER_PLAYS.keys():
         if [board_state[a], board_state[b]] == ['X', 'X']:
             square_to_mark = CORNER_PLAYS[(a, b)]
@@ -175,10 +179,18 @@ def computer_play(board_state):
                 return square_to_mark
 
     if plays == 3:
+        # If we own the middle square but the human owns two
+        # opposing corners, we must claim one of the edges
+        # to ensure a tie.
         if board_state[MIDDLE] == 'O':
             for corner in CORNERS:
                 if [board_state[corner], board_state[OPPOSITE_CORNER[corner]]] == ['X', 'X']:
                     return random.choice(EDGES)
+
+        # If the human owns the middle and a corner, we need
+        # to play one of the corners lateral to their corner
+        # in order to prevent them from setting up a situation
+        # where they can win two different ways.
         elif board_state[MIDDLE] == 'X':
             for corner in CORNERS:
                 if board_state[corner] == 'X':
@@ -245,7 +257,6 @@ def state_score(board_state, player='O', depth=0):
             best_bet = min([score, best_bet])
 
     return best_bet
-
 
 
 def opponent(who):
