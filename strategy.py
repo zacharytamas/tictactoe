@@ -200,8 +200,7 @@ def computer_play(board_state):
 
     # If we haven't identified a situation, use minimax to
     # find possible routes.
-
-    for possibility in visitable_states(board_state):
+    for possibility, square in visitable_states(board_state):
 
         score = state_score(possibility, player='O')
 
@@ -209,20 +208,15 @@ def computer_play(board_state):
         # found before, reset the possibilities list with this one.
         if score > highest:
             highest = score
-            possibilities = [possibility]
+            possibilities = [square]
 
         # If this possibility's score is the same as the
         # current highest, it is equally likely to lead to
         # a win for us. Add it to the list of possibilities.
         elif score == highest:
-            possibilities.append(possibility)
+            possibilities.append(square)
 
-    state = random.choice(possibilities)
-
-    # @TODO This is kind of a hack to figure out which square was actually marked.
-    for i in range(len(board_state)):
-        if board_state[i] != state[i]:
-            return i
+    return random.choice(possibilities)
 
 
 def state_score(board_state, player='O', depth=0):
@@ -294,11 +288,11 @@ def create_board():
 def visitable_states(board_state, player='X'):
     """
     >>> visitable_states([None])
-    [['X']]
+    [(['X'], 0)]
     >>> visitable_states([None, None])
-    [['X', None], [None, 'X']]
+    [(['X', None], 0), ([None, 'X'], 1)]
     >>> visitable_states([None, None, 'O'])
-    [['X', None, 'O'], [None, 'X', 'O']]
+    [(['X', None, 'O'], 0), ([None, 'X', 'O'], 1)]
     """
     possibilities = []
 
@@ -306,7 +300,7 @@ def visitable_states(board_state, player='X'):
         if square is None:
             temp = board_state[:]
             temp[i] = player
-            possibilities.append(temp)
+            possibilities.append((temp, i))
 
     return possibilities
 
@@ -320,7 +314,7 @@ def exhaustive_search():
     # Seed the search frontier with all the visitable
     # states at the start: that is, one where one X is
     # placed in every available square.
-    frontier = [[i] for i in visitable_states(create_board())]
+    frontier = [[i[0]] for i in visitable_states(create_board())]
     winning = True
 
     while len(frontier) and winning:
@@ -350,7 +344,7 @@ def exhaustive_search():
         # states later.
         for p_state in visitable_states(board_state):
             p_state_chain = state_chain[:]
-            p_state_chain.append(p_state)
+            p_state_chain.append(p_state[0])
             frontier.append(p_state_chain)
 
 if __name__ == "__main__":
